@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="create-weather" author="iguan04ka">
+
+    <preConditions onFail="CONTINUE">
+        <not>
+            <tableExists tableName="weather"/>
+        </not>
+    </preConditions>
+
+        <createTable tableName="weather">
+
+            <column name="id" type="SERIAL" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="city_id" type="INTEGER">
+                <constraints nullable="false" foreignKeyName="fk_weather_city"
+                             referencedTableName="city" referencedColumnNames="id"
+                             deleteCascade="true"/>
+            </column>
+
+            <column name="temperature" type="INTEGER">
+                <constraints nullable="false" checkConstraint="temperature BETWEEN -30 AND 50"/>
+            </column>
+
+            <column name="humidity" type="INTEGER">
+                <constraints nullable="false" checkConstraint="humidity BETWEEN 0 AND 100"/>
+            </column>
+
+            <column name="wind_speed" type="INTEGER">
+                <constraints nullable="false" checkConstraint="wind_speed BETWEEN 0 AND 30"/>
+            </column>
+
+            <column name="measured_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+
+    </changeSet>
+</databaseChangeLog>
