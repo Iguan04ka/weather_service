@@ -15,14 +15,8 @@
 
         <createTable tableName="weather">
 
-            <column name="id" type="SERIAL" autoIncrement="true">
+            <column name="id" type="INTEGER" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
-            </column>
-
-            <column name="city_id" type="INTEGER">
-                <constraints nullable="false" foreignKeyName="fk_weather_city"
-                             referencedTableName="city" referencedColumnNames="id"
-                             deleteCascade="true"/>
             </column>
 
             <column name="temperature" type="INTEGER">

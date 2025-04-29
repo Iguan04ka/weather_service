@@ -1,18 +1,12 @@
 package ru.iguana.weatherservicespringboot.api.service;
 
-import ru.iguana.weatherservicespringboot.data.model.City;
+import ru.iguana.weatherservicespringboot.api.dto.CityDto;
 
-import java.util.Collection;
-import java.util.Optional;
+import java.util.List;
 
 public interface WeatherService {
-
-    Collection<City> findAll();
-
-    City findOneByName(String name);
-
-    void create(String name);
-
-    void delete(String name);
+    void saveCity(String name);
+    List<CityDto> findAllCities();
+    CityDto findCityByName(String name);
+    void deleteCity(String name);
 }
-

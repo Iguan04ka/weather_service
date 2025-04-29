@@ -1,38 +1,39 @@
 package ru.iguana.weatherservicespringboot.api.controller;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.iguana.weatherservicespringboot.api.dto.CityDto;
 import ru.iguana.weatherservicespringboot.api.service.WeatherService;
-import ru.iguana.weatherservicespringboot.data.model.City;
 import ru.iguana.weatherservicespringboot.data.repository.CityRepository;
 
-import java.util.Collection;
+import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 public class WeatherServiceController {
     private final WeatherService weatherService;
 
-    public WeatherServiceController(WeatherService weatherService) {
-        this.weatherService = weatherService;
-    }
-
     @GetMapping("/weather/findAll")
-    public Collection<City> getAllCities(){
-        return weatherService.findAll();
+    public ResponseEntity<List<CityDto>> getAllCities(){
+        return ResponseEntity.ok(weatherService.findAllCities());
     }
 
     @GetMapping("/weather/find/{name}")
-    public City getCity(@PathVariable String name){
-        return weatherService.findOneByName(name);
+    public ResponseEntity<CityDto> getCity(@PathVariable("name") String name){
+        return ResponseEntity.ok(weatherService.findCityByName(name));
     }
 
     @PostMapping("/weather/save/{name}")
-    public void saveCity(@PathVariable String name){
-        weatherService.create(name);
+    public ResponseEntity<Void> saveCity(@PathVariable("name") String name){
+        weatherService.saveCity(name);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/weather/delete/{name}")
-    public void deleteCity(@PathVariable String name){
-        weatherService.delete(name);
+    public ResponseEntity<Void> deleteCity(@PathVariable("name") String name){
+        weatherService.deleteCity(name);
+        return ResponseEntity.ok().build();
     }
 
 

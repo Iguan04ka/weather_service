@@ -14,8 +14,14 @@
         </preConditions>
 
         <createTable tableName="city">
-            <column name="id" type="SERIAL" autoIncrement="true">
+            <column name="id" type="INTEGER" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="weather_id" type="INTEGER">
+                <constraints nullable="false" foreignKeyName="fk_city_weather"
+                             referencedTableName="weather" referencedColumnNames="id"
+                             deleteCascade="true"/>
             </column>
 
             <column name="name" type="VARCHAR(100)">
