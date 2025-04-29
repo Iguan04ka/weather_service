@@ -4,7 +4,7 @@ spring:
 
   liquibase:
     enabled: true
-    change-log: db/changelog/changelog-master.xml.xml
+    change-log: db/changelog/changelog-master.xml
 
   datasource:
     url: jdbc:postgresql://localhost:5433/Weather
