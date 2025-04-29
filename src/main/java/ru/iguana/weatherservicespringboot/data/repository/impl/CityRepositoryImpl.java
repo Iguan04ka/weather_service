@@ -14,23 +14,13 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public class CityRepositoryImpl implements CityRepository {
     private final JdbcTemplate jdbcTemplate;
-
-    private final RowMapper<City> cityRowMapper = (rs, rowNum) -> {
-        City city = new City(rs.getString("name"));
-        if (rs.getObject("temperature") != null) {
-            Weather weather = new Weather();
-            weather.setTemperature(rs.getInt("temperature"));
-            weather.setHumidity(rs.getInt("humidity"));
-            weather.setWindSpeed(rs.getInt("wind_speed"));
-            city.setWeather(weather);
-        }
-        return city;
-    };
 
     public CityRepositoryImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -72,16 +62,22 @@ public class CityRepositoryImpl implements CityRepository {
     }
 
     private int getOrCreateCityId(String cityName) {
-        Integer cityId = findCityIdByName(cityName);
-        if (cityId == null) {
-            cityId = insertCity(cityName);
-        }
-        return cityId;
+        Optional<Integer> cityId = findCityIdByName(cityName);
+        return cityId.orElseGet(() -> insertCity(cityName));
     }
 
-    private Integer findCityIdByName(String cityName) {
+    private Optional<Integer> findCityIdByName(String cityName) {
         final String sql = "SELECT id FROM city WHERE name = ?";
-        return jdbcTemplate.queryForObject(sql, Integer.class, cityName);
+        try {
+            List<Integer> results = jdbcTemplate.query(
+                    sql,
+                    (rs, rowNum) -> rs.getInt("id"),
+                    cityName
+            );
+            return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 
     private int insertCity(String cityName) {
@@ -89,7 +85,10 @@ public class CityRepositoryImpl implements CityRepository {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement ps = connection.prepareStatement(
+                    sql,
+                    new String[]{"id"}
+            );
             ps.setString(1, cityName);
             return ps;
         }, keyHolder);
@@ -109,4 +108,16 @@ public class CityRepositoryImpl implements CityRepository {
                 weather.getWindSpeed(),
                 Timestamp.valueOf(LocalDateTime.now()));
     }
+
+    private final RowMapper<City> cityRowMapper = (rs, rowNum) -> {
+        City city = new City(rs.getString("name"));
+        if (rs.getObject("temperature") != null) {
+            Weather weather = new Weather();
+            weather.setTemperature(rs.getInt("temperature"));
+            weather.setHumidity(rs.getInt("humidity"));
+            weather.setWindSpeed(rs.getInt("wind_speed"));
+            city.setWeather(weather);
+        }
+        return city;
+    };
 }
