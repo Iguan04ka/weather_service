@@ -1,4 +1,25 @@
 spring:
   application:
     name: WeatherServiceSpringBoot
-    
+
+  liquibase:
+    enabled: true
+    change-log: db/changelog/changelog-master.xml
+
+  jpa:
+    properties:
+      '[hypersistence.utils.enable_types_contributor]': false
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+
+  sql:
+    init:
+      platform: postgres
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/Weather
+    username: iguana
+    password: postgres
+    driverClassName: org.postgresql.Driver
