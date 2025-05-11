@@ -1,10 +1,49 @@
-version: '3'
+version: '3.8'
+
 services:
   postgres:
-    image: postgres:latest
+    image: postgres:14
+    container_name: weather_pg
     environment:
       POSTGRES_USER: iguana
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: Weather
     ports:
       - "5433:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  liquibase:
+    image: liquibase/liquibase
+    container_name: liquibase_migration
+    depends_on:
+      - postgres
+    volumes:
+      - ./src/main/resources/db/changelog:/liquibase/changelog
+    command:
+      [
+        "--changeLogFile=changelog/changelog-master.xml",
+        "--url=jdbc:postgresql://postgres:5432/Weather",
+        "--username=iguana",
+        "--password=postgres",
+        "--driver=org.postgresql.Driver",
+        "update"
+      ]
+
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: weather_app
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/Weather
+      SPRING_DATASOURCE_USERNAME: iguana
+      SPRING_DATASOURCE_PASSWORD: postgres
+    depends_on:
+      - liquibase
+
+volumes:
+  pg_data:

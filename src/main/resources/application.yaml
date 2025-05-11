@@ -20,6 +20,6 @@ spring:
 
   datasource:
     url: jdbc:postgresql://localhost:5433/Weather
-    username: iguana
-    password: postgres
+    username: ${SPRING_DATASOURCE_USERNAME:iguana}
+    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
     driverClassName: org.postgresql.Driver
