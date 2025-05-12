@@ -7,6 +7,12 @@
 
     <changeSet id="create-weather" author="iguan04ka">
 
+        <preConditions onFail="CONTINUE">
+            <not>
+                <uniqueConstraintExists constraintName="unique_city_name" tableName="city"/>
+            </not>
+        </preConditions>
+        
         <addUniqueConstraint
                 tableName="city"
                 columnNames="name"
