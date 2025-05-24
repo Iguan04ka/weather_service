@@ -4,8 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.iguana.weatherservicespringboot.api.config.WeatherServiceProperties;
 import ru.iguana.weatherservicespringboot.api.dto.CityDto;
+import ru.iguana.weatherservicespringboot.api.dto.WeatherApiDto;
 import ru.iguana.weatherservicespringboot.api.service.WeatherService;
+import ru.iguana.weatherservicespringboot.api.service.impl.WeatherServiceREST;
 
 
 import java.util.List;
@@ -15,6 +18,8 @@ import java.util.List;
 @Slf4j
 public class WeatherServiceController {
     private final WeatherService weatherService;
+
+    private final WeatherServiceREST serviceREST;
 
     @GetMapping("/weather/findAll")
     public ResponseEntity<List<CityDto>> getAllCities(){
@@ -71,6 +76,9 @@ public class WeatherServiceController {
             throw e;
         }
     }
-
-
+    @GetMapping("/weather/qwe")
+    public ResponseEntity<List<WeatherApiDto>> qwe(@RequestParam String address,
+                                                   @RequestParam String date){
+        return ResponseEntity.ok(serviceREST.getWeatherData(address, date));
+    }
 }

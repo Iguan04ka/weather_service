@@ -32,6 +32,8 @@ services:
 
 
   app:
+    env_file:
+      - .env
     build:
       context: .
       dockerfile: Dockerfile
@@ -39,6 +41,8 @@ services:
     ports:
       - "8080:8080"
     environment:
+      YANDEX_API: ${YANDEX_API}
+      METEO_API: ${METEO_API}
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/Weather
       SPRING_DATASOURCE_USERNAME: iguana
       SPRING_DATASOURCE_PASSWORD: postgres

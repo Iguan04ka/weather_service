@@ -3,6 +3,7 @@ package ru.iguana.weatherservicespringboot.api.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
 import ru.iguana.weatherservicespringboot.api.dto.CityDto;
 import ru.iguana.weatherservicespringboot.api.mapper.CityMapper;
 import ru.iguana.weatherservicespringboot.api.service.WeatherService;

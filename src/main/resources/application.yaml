@@ -23,3 +23,11 @@ spring:
     username: ${SPRING_DATASOURCE_USERNAME:iguana}
     password: ${SPRING_DATASOURCE_PASSWORD:postgres}
     driverClassName: org.postgresql.Driver
+
+api:
+  token:
+    yandex: ${YANDEX_API}
+    meteo: ${METEO_API}
+  url:
+    yandex: https://geocode-maps.yandex.ru/v1/
+    meteo: https://projecteol.ru/api/weather/
