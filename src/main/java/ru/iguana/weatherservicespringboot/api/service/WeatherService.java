@@ -5,8 +5,9 @@ import ru.iguana.weatherservicespringboot.api.dto.CityDto;
 import java.util.List;
 
 public interface WeatherService {
-    void saveCity(String name);
-    List<CityDto> findAllCities();
-    CityDto findCityByName(String name);
-    void deleteCity(String name);
+    void deleteCityByName(String name);
+    CityDto getForecastByCityName(String cityName);
+    void saveCityAndHisWeatherForecast(String cityName, String date);
+    void updateWeatherForecastByCityName(String cityName, String date);
+
 }

@@ -5,30 +5,35 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
 
-    <changeSet id="create-city" author="iguan04ka">
-
-        <preConditions onFail="CONTINUE">
+    <changeSet id="create-city-table" author="iguan04ka">
+        <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="city"/>
+                <tableExists tableName="city" schemaName="public"/>
             </not>
         </preConditions>
 
-        <createTable tableName="city">
-            <column name="id" type="INTEGER" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false"/>
+        <createTable tableName="city" schemaName="public">
+            <column name="id" type="SERIAL">
+                <constraints primaryKey="true" primaryKeyName="city_pkey" nullable="false"/>
+            </column>
+
+            <column name="name" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="unique_city_name"/>
             </column>
 
             <column name="weather_id" type="INTEGER">
-                <constraints nullable="false" foreignKeyName="fk_city_weather"
+                <constraints nullable="true" foreignKeyName="fk_city_weather"
                              referencedTableName="weather" referencedColumnNames="id"
                              deleteCascade="true"/>
             </column>
 
-            <column name="name" type="VARCHAR(100)">
-                <constraints nullable="false" uniqueConstraintName="unique_city_name"/>
+            <column name="lat" type="FLOAT">
+                <constraints nullable="true"/>
             </column>
 
-            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="lon" type="FLOAT">
+                <constraints nullable="true"/>
+            </column>
         </createTable>
 
     </changeSet>

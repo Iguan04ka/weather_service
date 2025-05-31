@@ -1,22 +1,20 @@
 package ru.iguana.weatherservicespringboot.api.dto;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.Accessors;
+import ru.iguana.weatherservicespringboot.data.model.WeatherModel;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
-@Getter
-@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Accessors(chain = true)
 public class WeatherDto {
-
-    private Integer temperature;
-
-    private Integer humidity;
-
-    private Integer windSpeed;
-
     private LocalDateTime measuredAt;
+
+    private List<WeatherModel> weatherData;
+
 }

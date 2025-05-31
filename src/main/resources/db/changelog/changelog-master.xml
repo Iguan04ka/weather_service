@@ -7,6 +7,5 @@
 
     <include file="changelog-create-table-weather-1.1.xml" relativeToChangelogFile="true"/>
     <include file="changelog-create-table-city-1.0.xml" relativeToChangelogFile="true"/>
-    <include file="changelog-add-unique-constraint-1.2.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

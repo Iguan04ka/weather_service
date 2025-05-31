@@ -1,9 +1,15 @@
 package ru.iguana.weatherservicespringboot.data.entity;
 
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.Accessors;
+import org.hibernate.annotations.Type;
+import ru.iguana.weatherservicespringboot.data.model.WeatherModel;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 
@@ -12,31 +18,17 @@ import java.util.Random;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Accessors(chain = true)
 public class WeatherEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false)
-    private Integer temperature;
-
-    @Column(nullable = false)
-    private Integer humidity;
-
-    @Column(name = "wind_speed", nullable = false)
-    private Integer windSpeed;
-
-    @Column(name = "measured_at", nullable = false)
+    @Column(name = "measured_at")
     private LocalDateTime measuredAt;
 
-    public static WeatherEntity createRandomWeather() {
-        Random random = new Random();
-        WeatherEntity weather = new WeatherEntity();
-        weather.setTemperature(random.nextInt(60) - 20);
-        weather.setHumidity(random.nextInt(101));
-        weather.setWindSpeed(random.nextInt(31));
-        weather.setMeasuredAt(LocalDateTime.now());
-        return weather;
-    }
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb", name = "weather_data")
+    private List<WeatherModel> weatherData = new ArrayList<>();
 
 }

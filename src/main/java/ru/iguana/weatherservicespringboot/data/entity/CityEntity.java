@@ -4,35 +4,31 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
-
+import lombok.experimental.Accessors;
 @Entity
-@Table(schema = "public", name = "city")
+@Table(
+        schema = "public",
+        name = "city"
+)
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-
+@Accessors(chain = true)
 public class CityEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(length = 100, unique = true)
+    private String name;
+
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "weather_id", referencedColumnName = "id")
     private WeatherEntity weather;
 
-    @Column(nullable = false, length = 100)
-    private String name;
+    @Column(name = "lat")
+    private Float lat;
 
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-        if (this.weather == null) {
-            this.weather = WeatherEntity.createRandomWeather();
-        }
-    }
+    @Column(name = "lon")
+    private Float lon;
 }
