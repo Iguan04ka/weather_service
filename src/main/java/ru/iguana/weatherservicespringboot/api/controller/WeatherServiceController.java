@@ -1,9 +1,12 @@
 package ru.iguana.weatherservicespringboot.api.controller;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.iguana.weatherservicespringboot.data.annotation.RussianLettersOnly;
 import ru.iguana.weatherservicespringboot.api.dto.CityDto;
 import ru.iguana.weatherservicespringboot.api.service.WeatherService;
 
@@ -14,7 +17,7 @@ public class WeatherServiceController {
     private final WeatherService weatherService;
 
     @GetMapping("/weather/getForecast")
-    public ResponseEntity<CityDto> getForecast(@RequestParam String cityName) {
+    public ResponseEntity<CityDto> getForecast(@RequestParam @RussianLettersOnly @NotNull @NotBlank String cityName) {
         log.info("GET /weather/getForecast request received for city: {}", cityName);
         try {
             CityDto response = weatherService.getForecastByCityName(cityName);
@@ -27,8 +30,8 @@ public class WeatherServiceController {
     }
 
     @PostMapping("/weather/saveForecast")
-    public ResponseEntity<Void> saveForecast(@RequestParam String cityName,
-                                             @RequestParam String date) {
+    public ResponseEntity<Void> saveForecast(@RequestParam @RussianLettersOnly @NotNull @NotBlank String cityName,
+                                             @RequestParam @NotNull @NotBlank String date) {
         log.info("POST /weather/saveForecast request received for city: {}, date: {}", cityName, date);
         try {
             weatherService.saveCityAndHisWeatherForecast(cityName, date);
@@ -41,7 +44,7 @@ public class WeatherServiceController {
     }
 
     @DeleteMapping("/weather/deleteCity")
-    public ResponseEntity<Void> deleteCity(@RequestParam String cityName) {
+    public ResponseEntity<Void> deleteCity(@RequestParam @RussianLettersOnly @NotNull @NotBlank String cityName) {
         log.info("DELETE /weather/deleteCity request received for city: {}", cityName);
         try {
             weatherService.deleteCityByName(cityName);
@@ -53,8 +56,8 @@ public class WeatherServiceController {
         }
     }
     @PatchMapping("/weather/updateForecast")
-    public ResponseEntity<Void> updateForecast(@RequestParam String cityName,
-                                               @RequestParam String date) {
+    public ResponseEntity<Void> updateForecast(@RequestParam @RussianLettersOnly @NotNull @NotBlank String cityName,
+                                               @RequestParam @NotNull @NotBlank String date) {
         log.info("PATCH /weather/updateForecast request received for city: {}, date: {}", cityName, date);
         try {
             weatherService.updateWeatherForecastByCityName(cityName, date);
