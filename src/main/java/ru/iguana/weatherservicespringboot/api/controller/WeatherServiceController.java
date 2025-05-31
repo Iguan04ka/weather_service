@@ -13,81 +13,56 @@ import ru.iguana.weatherservicespringboot.api.service.WeatherService;
 public class WeatherServiceController {
     private final WeatherService weatherService;
 
-
-//    @GetMapping("/weather/findAll")
-//    public ResponseEntity<List<CityDto>> getAllCities(){
-//        log.info("Received request to get all cities and they weather");
-//        try{
-//            List<CityDto> response = weatherService.findAllCities();
-//            log.info("All cities successfully retrieved");
-//            return ResponseEntity.ok(response);
-//        }
-//        catch (Exception e){
-//            log.error("Error request to get all cities and they weather");
-//            throw e;
-//        }
-//    }
-//
-//    @GetMapping("/weather/find/{name}")
-//    public ResponseEntity<CityDto> getCity(@PathVariable("name") String name){
-//        log.info("Received request to get city " + name + " and his weather");
-//        try {
-//            CityDto response = weatherService.findCityByName(name);
-//            log.info("City with name " + name + " successfully retrieved");
-//            return ResponseEntity.ok(response);
-//        }
-//        catch (Exception e){
-//            log.error("Error request to get city " + name + " and his weather");
-//            throw e;
-//        }
-//    }
-//
-//    @PostMapping("/weather/save/{name}")
-//    public ResponseEntity<Void> saveCity(@PathVariable("name") String name){
-//        log.info("Received request to save city " + name);
-//        try {
-//            weatherService.saveCity(name);
-//            log.info("City with name " + name + " successfully saved");
-//            return ResponseEntity.ok().build();
-//        }
-//        catch (Exception e){
-//            log.error("Error request to save city " + name);
-//            throw e;
-//        }
-//    }
-//
-//    @DeleteMapping("/weather/delete/{name}")
-//    public ResponseEntity<Void> deleteCity(@PathVariable("name") String name){
-//        log.info("Received request to delete city " + name);
-//        try{
-//            weatherService.deleteCity(name);
-//            log.info("City with name " + name + " successfully deleted");
-//            return ResponseEntity.ok().build();
-//        }
-//        catch (Exception e){
-//            log.error("Error request to delete city " + name);
-//            throw e;
-//        }
-//    }
     @GetMapping("/weather/getForecast")
-    public ResponseEntity<CityDto> getForecast(@RequestParam String cityName){
-        return ResponseEntity.ok(weatherService.getForecastByCityName(cityName));
+    public ResponseEntity<CityDto> getForecast(@RequestParam String cityName) {
+        log.info("GET /weather/getForecast request received for city: {}", cityName);
+        try {
+            CityDto response = weatherService.getForecastByCityName(cityName);
+            log.info("GET /weather/getForecast successful for city: {}, response: {}", cityName, response);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            log.error("Error in GET /weather/getForecast for city: {}", cityName, e);
+            throw e;
+        }
     }
+
     @PostMapping("/weather/saveForecast")
     public ResponseEntity<Void> saveForecast(@RequestParam String cityName,
-                                             @RequestParam String date){
-        weatherService.saveCityAndHisWeatherForecast(cityName, date);
-        return ResponseEntity.ok().build();
+                                             @RequestParam String date) {
+        log.info("POST /weather/saveForecast request received for city: {}, date: {}", cityName, date);
+        try {
+            weatherService.saveCityAndHisWeatherForecast(cityName, date);
+            log.info("POST /weather/saveForecast successful for city: {}, date: {}", cityName, date);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            log.error("Error in POST /weather/saveForecast for city: {}, date: {}", cityName, date, e);
+            throw e;
+        }
     }
+
     @DeleteMapping("/weather/deleteCity")
-    public ResponseEntity<Void> deleteCity(@RequestParam String cityName){
-        weatherService.deleteCityByName(cityName);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Void> deleteCity(@RequestParam String cityName) {
+        log.info("DELETE /weather/deleteCity request received for city: {}", cityName);
+        try {
+            weatherService.deleteCityByName(cityName);
+            log.info("DELETE /weather/deleteCity successful for city: {}", cityName);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            log.error("Error in DELETE /weather/deleteCity for city: {}", cityName, e);
+            throw e;
+        }
     }
     @PatchMapping("/weather/updateForecast")
     public ResponseEntity<Void> updateForecast(@RequestParam String cityName,
-                                               @RequestParam String date){
-        weatherService.updateWeatherForecastByCityName(cityName, date);
-        return ResponseEntity.ok().build();
+                                               @RequestParam String date) {
+        log.info("PATCH /weather/updateForecast request received for city: {}, date: {}", cityName, date);
+        try {
+            weatherService.updateWeatherForecastByCityName(cityName, date);
+            log.info("PATCH /weather/updateForecast successful for city: {}, date: {}", cityName, date);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            log.error("Error in PATCH /weather/updateForecast for city: {}, date: {}", cityName, date, e);
+            throw e;
+        }
     }
 }
