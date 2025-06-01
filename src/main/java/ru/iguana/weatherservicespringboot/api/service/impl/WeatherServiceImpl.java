@@ -12,7 +12,6 @@ import org.springframework.web.client.RestClient;
 import ru.iguana.weatherservicespringboot.api.config.WeatherServiceProperties;
 import ru.iguana.weatherservicespringboot.api.dto.CityDto;
 import ru.iguana.weatherservicespringboot.api.mapper.CityMapper;
-import ru.iguana.weatherservicespringboot.api.mapper.WeatherMapper;
 import ru.iguana.weatherservicespringboot.api.service.WeatherService;
 import ru.iguana.weatherservicespringboot.data.entity.CityEntity;
 import ru.iguana.weatherservicespringboot.data.entity.WeatherEntity;
@@ -41,29 +40,41 @@ public class WeatherServiceImpl implements WeatherService {
 
     private final CityMapper cityMapper;
 
+    private final WeatherCacheService weatherCacheService;
+
     public WeatherServiceImpl(@Qualifier("MeteoRestClient") RestClient restClientMeteo,
                               @Qualifier("YandexRestClient") RestClient restClientYandex,
                               WeatherServiceProperties properties,
                               CityRepository cityRepository,
                               WeatherRepository weatherRepository,
-                              CityMapper cityMapper) {
+                              CityMapper cityMapper,
+                              WeatherCacheService weatherCacheService) {
         this.restClientMeteo = restClientMeteo;
         this.restClientYandex= restClientYandex;
         this.properties= properties;
         this.weatherRepository = weatherRepository;
         this.cityRepository = cityRepository;
         this.cityMapper = cityMapper;
+        this.weatherCacheService = weatherCacheService;
     }
 
     @Override
     public CityDto getForecastByCityName(String cityName) {
         log.info("Getting forecast for city: {}", cityName);
         try {
+            CityDto cachedData = weatherCacheService.get(cityName);
+            if (cachedData != null) {
+                log.info("Returning cached data for city: {}", cityName);
+                return cachedData;
+            }
+
             Optional<CityEntity> cityEntity = cityRepository.findByName(cityName);
 
             if (cityEntity.isPresent()) {
                 CityDto cityDto = cityMapper.toDto(cityEntity.get());
-                log.info("Successfully retrieved forecast for city: {}, data: {}", cityName, cityDto);
+
+                weatherCacheService.put(cityDto.getName(), cityDto);
+                log.info("Successfully retrieved and cached forecast for city: {}, data: {}", cityName, cityDto);
                 return cityDto;
             } else {
                 log.warn("City not found: {}", cityName);
@@ -75,12 +86,17 @@ public class WeatherServiceImpl implements WeatherService {
         }
     }
 
+
     @Override
     public void saveCityAndHisWeatherForecast(String cityName, String date) {
         log.info("Saving city and weather forecast for city: {}, date: {}", cityName, date);
         try {
-            getAndSaveAllDataAboutWeatherAndCity(cityName, date);
-            log.info("Successfully saved city and weather for city: {}, date: {}", cityName, date);
+            CityEntity cityEntity = getAndSaveAllDataAboutWeatherAndCity(cityName, date);
+            CityDto cityDto = cityMapper.toDto(cityEntity);
+
+            weatherCacheService.put(cityDto.getName(), cityDto);
+
+            log.info("Successfully saved city and weather for city: {}, date: {}. Data cached.", cityName, date);
         } catch (RuntimeException e) {
             log.error("Error saving city and weather for city: {}, date: {}", cityName, date, e);
             throw e;
@@ -126,6 +142,12 @@ public class WeatherServiceImpl implements WeatherService {
             weatherRepository.save(weatherEntity);
             cityRepository.save(cityEntity);
 
+            CityDto cityDto = cityMapper.toDto(cityEntity);
+
+            weatherCacheService.put(cityName, cityDto);
+
+            log.info("Successfully cached weather after update for city: {}", cityName);
+
             log.info("Successfully updated weather for city: {}", cityName);
         } catch (RuntimeException e) {
             log.error("Error updating weather for city: {}", cityName, e);
@@ -133,7 +155,7 @@ public class WeatherServiceImpl implements WeatherService {
         }
     }
 
-    private void getAndSaveAllDataAboutWeatherAndCity(String cityName, String date) {
+    private CityEntity getAndSaveAllDataAboutWeatherAndCity(String cityName, String date) {
         log.debug("Getting and saving all data for city: {}, date: {}", cityName, date);
         try {
             Coordinates coord = getCoordinates(cityName);
@@ -145,7 +167,11 @@ public class WeatherServiceImpl implements WeatherService {
             WeatherEntity weatherEntity = saveWeatherEntity(weatherData);
             log.debug("Saved weather entity: {}", weatherEntity.getId());
 
-            saveCityEntity(weatherEntity, coord.lat, coord.lon, cityName);
+            CityEntity cityEntity = saveCityEntity(weatherEntity, coord.lat, coord.lon, cityName);
+            log.debug("Saved city entity: {}", cityEntity.getId());
+
+            return cityEntity;
+
         } catch (RuntimeException e) {
             log.error("Error in getAndSaveAllDataAboutWeatherAndCity for city: {}", cityName, e);
             throw e;

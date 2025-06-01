@@ -24,6 +24,9 @@ spring:
     password: ${SPRING_DATASOURCE_PASSWORD:postgres}
     driverClassName: org.postgresql.Driver
 
+  cache:
+    type: caffeine
+
 api:
   token:
     yandex: ${YANDEX_API}
@@ -31,3 +34,6 @@ api:
   url:
     yandex: https://geocode-maps.yandex.ru/v1/
     meteo: https://projecteol.ru/api/weather/
+
+
+
