@@ -1,4 +1,15 @@
 spring:
+  kafka:
+    bootstrap-servers: kafka:9092
+    consumer:
+      group-id: weather-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+        spring.json.value.default.type: java.util.ArrayList
+
+
   application:
     name: WeatherServiceSpringBoot
 
@@ -34,6 +45,10 @@ api:
   url:
     yandex: https://geocode-maps.yandex.ru/v1/
     meteo: https://projecteol.ru/api/weather/
+
+kafka:
+  topic:
+    city-update: weather-update-cities
 
 
 
