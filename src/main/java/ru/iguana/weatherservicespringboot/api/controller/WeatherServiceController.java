@@ -13,10 +13,11 @@ import ru.iguana.weatherservicespringboot.api.service.WeatherService;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-public class WeatherServiceController {
+public class WeatherServiceController extends AbstractWeatherServiceController{
     private final WeatherService weatherService;
 
     @GetMapping("/weather/getForecast")
+    @Override
     public ResponseEntity<CityDto> getForecast(@RequestParam @RussianLettersOnly @NotNull @NotBlank String cityName) {
         log.info("GET /weather/getForecast request received for city: {}", cityName);
         try {
@@ -30,6 +31,7 @@ public class WeatherServiceController {
     }
 
     @PostMapping("/weather/saveForecast")
+    @Override
     public ResponseEntity<Void> saveForecast(@RequestParam @RussianLettersOnly @NotNull @NotBlank String cityName,
                                              @RequestParam @NotNull @NotBlank String date) {
         log.info("POST /weather/saveForecast request received for city: {}, date: {}", cityName, date);
@@ -44,6 +46,7 @@ public class WeatherServiceController {
     }
 
     @DeleteMapping("/weather/deleteCity")
+    @Override
     public ResponseEntity<Void> deleteCity(@RequestParam @RussianLettersOnly @NotNull @NotBlank String cityName) {
         log.info("DELETE /weather/deleteCity request received for city: {}", cityName);
         try {
@@ -56,6 +59,7 @@ public class WeatherServiceController {
         }
     }
     @PatchMapping("/weather/updateForecast")
+    @Override
     public ResponseEntity<Void> updateForecast(@RequestParam @RussianLettersOnly @NotNull @NotBlank String cityName,
                                                @RequestParam @NotNull @NotBlank String date) {
         log.info("PATCH /weather/updateForecast request received for city: {}, date: {}", cityName, date);
